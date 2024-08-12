@@ -19,8 +19,9 @@ def replace_private_content(line):
     return re.sub(r'\[\[(.*?)\]\]', lambda x: hashlib.md5(x.group(1).encode()).hexdigest(), line)
 
 def replace_text_patterns(line):
-    # Replace ((text)) with an empty string (or any other logic you wish)
-    return re.sub(r'\(\((.*?)\)\)', '', line)
+    # Replace ((text)) with an empty string (as an example)
+    line = re.sub(r'\(\((.*?)\)\)', '', line)
+    return line
 
 if __name__ == '__main__':
 
@@ -48,9 +49,6 @@ if __name__ == '__main__':
                 # Handle headings
                 match = re.match(r'^(#{1,6})\s+(.*)', line)
                 if match:
-                    if in_list:
-                        html_content.append('</ul>\n')
-                        in_list = False
                     h_level = len(match.group(1))
                     heading_text = match.group(2)
                     html_content.append(f'<h{h_level}>{heading_text}</h{h_level}>\n')
@@ -77,11 +75,9 @@ if __name__ == '__main__':
                 line = replace_private_content(line)
                 line = replace_text_patterns(line)
 
-                # Handle paragraphs and empty lines
-                if line.strip():
+                # Handle paragraphs
+                if line.strip() != "":
                     html_content.append(f'<p>\n{line}\n</p>\n')
-                else:
-                    html_content.append('<br/>\n')
 
             if in_list:  # Close any open list at the end
                 html_content.append('</ul>\n')
